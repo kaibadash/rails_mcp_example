@@ -2,8 +2,16 @@
 
 module Mcp
   class MessagesController < ApplicationController
+    skip_before_action :verify_authenticity_token
+
     def create
-      server = MCP::Server.new(
+      render(json: mcp_server.handle_json(request.body.read))
+    end
+
+    private
+
+    def mcp_server
+      @mcp_server ||= MCP::Server.new(
         name: 'japanese-fortune-teller',
         title: 'Japanese Fortune Teller - Omikuji & Lucky Item',
         version: '1.0.0',
@@ -14,7 +22,6 @@ module Mcp
         INSTRUCTIONS
         tools: [Mcp::OmikujiTool, Mcp::LuckItemTool]
       )
-      render(json: server.handle_json(request.body.read))
     end
   end
 end
