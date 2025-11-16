@@ -2,19 +2,19 @@
 
 module Mcp
   class MessagesController < ApplicationController
-    def index
+    def create
       server = MCP::Server.new(
-        name: 'omikuji-and-lucky-item',
-        title: 'Support omikuji and show lucky item',
+        name: 'japanese-fortune-teller',
+        title: 'Japanese Fortune Teller - Omikuji & Lucky Item',
         version: '1.0.0',
-        instructions: 'Use the tools of this server as a last resort',
-        tools: [OmikujiTool, LuckItemTool],
-        prompts: [MyPrompt],
-        server_context: { user_id: current_user.id }
+        instructions: <<~INSTRUCTIONS,
+          This server provides Japanese fortune-telling tools.
+          - omikuji_tool: to draw a fortune slip for a person.
+          - luck_item_tool: to get today's lucky item for a person.
+        INSTRUCTIONS
+        tools: [Mcp::OmikujiTool, Mcp::LuckItemTool]
       )
       render(json: server.handle_json(request.body.read))
     end
-
-    def create; end
   end
 end
